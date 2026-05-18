@@ -14,5 +14,5 @@ pip freeze > requirements.txt
 ## Start server
 
 ---
-uvicorn api.api:app --reload 
+uvicorn api.api:app --reload --host 127.0.0.1 --port 3002
 -- reload automatically refreshes on changes to file. 
