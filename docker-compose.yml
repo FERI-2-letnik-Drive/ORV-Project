@@ -1,0 +1,9 @@
+services:
+  orv-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: orv-api
+    container_name: orv_api_container
+    ports:
+      - "3002:3002"
