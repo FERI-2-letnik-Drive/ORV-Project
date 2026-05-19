@@ -21,6 +21,11 @@ docker compose up
 ```bash
 docker compose down
 ```
+
+## Stop Container
+```bash
+docker compose stop
+```
 ---
 # MANUAL SETUP
 
