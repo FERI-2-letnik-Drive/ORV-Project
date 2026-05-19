@@ -1,6 +1,5 @@
 # ONE COMMAND SETUP
 
----
 ## Build And Start Docker Container
 ```bash
 docker compose up --build
