@@ -3,14 +3,13 @@
 ---
 ## Install requirements
 
----
+
 ```bash
 pip install -r requirements-dev.txt
 ```
-
+---
 ## Save requirements
 
----
 Check installed package versions:
 
 ```bash
@@ -25,12 +24,10 @@ Update manually:
 
 **Keep OpenCV versions the same in both requirement files.**
 
-
-## Start server
-
 ---
+## Start server
 ```bash
 uvicorn api.api:app --reload --host 127.0.0.1 --port 3002
 ```
 
-**--reload flag** automatically refreshes on changes to file. 
+**--reload flag** automatically refreshes on changes to file.
