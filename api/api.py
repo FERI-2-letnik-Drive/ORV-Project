@@ -7,8 +7,8 @@ def health():
     return {"status": "ok"}
 
 
-@app.post("/compare")
-async def compare(
+@app.post("/api/v1/face-verifications")
+async def face_verification(
     reference_image: UploadFile = File(...), # ... = required, = File -> look in multipart/form-data
     current_image: UploadFile = File(...)
 ):
