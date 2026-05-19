@@ -5,16 +5,26 @@
 
 ---
 ```bash
-pip install -r requirements.txt
+pip install -r requirements-dev.txt
 ```
 
 ## Save requirements
 
 ---
-**Save exact versions of all Python packages installes in this env.**
+Check installed package versions:
+
 ```bash
-pip freeze > requirements.txt 
+pip freeze
 ```
+
+Update manually:
+
+- `requirements-base.txt` → shared packages
+- `requirements-dev.txt` → `opencv-python`
+- `requirements-docker.txt` → `opencv-python-headless`
+
+**Keep OpenCV versions the same in both requirement files.**
+
 
 ## Start server
 
