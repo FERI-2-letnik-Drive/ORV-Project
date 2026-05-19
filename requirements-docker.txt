@@ -1,0 +1,4 @@
+-r requirements-base.txt
+# Docker container has no GUI, so use opencv-python-headless instead of opencv-python.
+# It throws an error otherwise.
+opencv-python-headless==4.13.0.92
