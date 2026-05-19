@@ -12,10 +12,20 @@ def bytes_to_cv_image(image_bytes: bytes) -> np.ndarray:
 
     return image
 
+def preprocess_image_for_comparison(image: np.ndarray) -> np.ndarray:
+    image = cv2.resize(image, (256, 256))
+    #image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB) if model requires uncomment
+    image = image.astype(np.float32) / 255.0
+
+    return image
+
 
 def face_comparison(reference_image: bytes, current_image: bytes) -> dict:
     reference_cv_image = bytes_to_cv_image(reference_image)
     current_cv_image = bytes_to_cv_image(current_image)
+
+    reference_image = preprocess_image_for_comparison(reference_cv_image)
+    current_image = preprocess_image_for_comparison(current_cv_image)
 
     return {
         "match": True,
