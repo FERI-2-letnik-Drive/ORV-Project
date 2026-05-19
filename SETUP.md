@@ -1,9 +1,14 @@
 # ONE COMMAND SETUP
 
 ---
-## Start Docker Container
+## Build And Start Docker Container
 ```bash
 docker compose up --build
+```
+
+## Start Docker Container Without Build
+```bash
+docker compose up
 ```
 
 ## Clean Rebuild And Start Docker Container
@@ -12,7 +17,6 @@ docker compose build --no-cache
 docker compose up
 ```
 
----
 ## Stop And Remove Container
 ```bash
 docker compose down
@@ -22,11 +26,16 @@ docker compose down
 
 ## Build Docker Image
 
+Normal build:
+```bash
+docker build -t orv-api:latest .
+```
+**OR**
+
+Clean Rebuild:
 ```bash
 docker build --no-cache -t orv-api:latest .
 ```
-
----
 
 ## Run Docker Container
 
@@ -34,15 +43,16 @@ docker build --no-cache -t orv-api:latest .
 docker run --rm --name orv_api_container -p 3002:3002 orv-api:latest
 ```
 
----
-
 ## Stop Container
 
-Press:
-CTRL + C
+In other terminal: 
+```bash
+docker stop orv_api_container
+```
 
-**AND**
+**OR**
 
+**CTRL + C** and then: 
 ```bash
 docker stop orv_api_container
 ```
