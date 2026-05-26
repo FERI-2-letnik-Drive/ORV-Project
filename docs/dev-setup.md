@@ -24,6 +24,12 @@ Update manually:
 
 **Keep OpenCV versions the same in both requirement files.**
 
+## Tests
+Module = -m
+```bash
+python -m pytest
+```
+
 ---
 ## Start server
 ```bash
