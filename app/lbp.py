@@ -45,3 +45,32 @@ def compute_lbp(gray: np.ndarray) -> np.ndarray:
     out = np.zeros(gray.shape, dtype=np.uint8)
     out[1:-1, 1:-1] = lbp
     return out
+
+
+def lbp_histogram(gray: np.ndarray, grid: tuple[int, int] = (8, 8)) -> np.ndarray:
+    """Zgradi prostorsko-mrezni LBP histogram (deskriptor obraza).
+
+    Sliko razdelimo na grid[0] x grid[1] celic. Za vsako celico izracunamo
+    256-koshni histogram LBP kod in ga L1-normaliziramo (vsota = 1), da je
+    neodvisen od velikosti celice. Histograme vseh celic zlozimo v en
+    znacilni vektor dolzine grid[0] * grid[1] * 256.
+
+    Mrezna delitev ohrani grobo prostorsko informacijo (oci, nos, usta
+    ostanejo v svojih celicah), kar je kljucno za primerjavo obrazov.
+    """
+    lbp = compute_lbp(gray)
+    rows, cols = grid
+    h, w = lbp.shape
+    cell_h, cell_w = h // rows, w // cols
+
+    features: list[np.ndarray] = []
+    for r in range(rows):
+        for c in range(cols):
+            cell = lbp[r * cell_h:(r + 1) * cell_h, c * cell_w:(c + 1) * cell_w]
+            hist, _ = np.histogram(cell, bins=256, range=(0, 256))
+            total = hist.sum()
+            if total > 0:
+                hist = hist / total
+            features.append(hist.astype(np.float32))
+
+    return np.concatenate(features)
