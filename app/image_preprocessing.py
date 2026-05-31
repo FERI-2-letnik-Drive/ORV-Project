@@ -50,3 +50,31 @@ def crop_largest_face(image: np.ndarray) -> np.ndarray:
     # crop
     return image[y:y + h, x:x + w]
 
+
+
+def preprocess_for_model(image: np.ndarray, size: int = 256,
+                         denoise: bool = True) -> np.ndarray:
+    """Pripravi sivinsko sliko obraza za LBP/ORB primerjavo.
+
+    Koraki:
+    1. izrez najvecjega obraza (Haar kaskada),
+    2. sprememba velikosti na size x size (poenotenje vhoda),
+    3. pretvorba v sivinski barvni prostor (LBP in ORB delata na intenziteti),
+    4. odstranjevanje suma z medianskim filtrom (ohrani robove),
+    5. izenacevanje histograma (CLAHE) za neobcutljivost na osvetlitev.
+
+    Vrne uint8 sivinsko sliko velikosti size x size.
+    """
+    face = crop_largest_face(image)
+    face = cv2.resize(face, (size, size))
+    gray = cv2.cvtColor(face, cv2.COLOR_BGR2GRAY)
+
+    if denoise:
+        # mediansko glajenje odstrani 'sol-poper' sum, ohrani robove
+        gray = cv2.medianBlur(gray, 3)
+
+    # CLAHE = lokalno izenacevanje histograma -> odpornost na razlicno svetlobo
+    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+    gray = clahe.apply(gray)
+
+    return gray
