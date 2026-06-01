@@ -50,12 +50,39 @@ def score_faces(gray_a: np.ndarray, gray_b: np.ndarray,
     }
 
 
-def face_comparison(reference_image: bytes, current_image: bytes) -> dict:
-    # TODO: povezano v naslednjem koraku (odlocitev + obravnava napak)
+def face_comparison(reference_image: bytes, current_image: bytes,
+                    config: ModelConfig = DEFAULT_CONFIG) -> dict:
+    """Primerjaj referencni in trenutni obraz ter vrni odlocitev.
+
+    Vrne slovar z 'match' (bool), 'confidence' (zdruzeni rezultat) in
+    'message'. Ce na kateri sliki ni zaznan obraz, vrne match=False z
+    razlago namesto napake.
+    """
     reference_cv_image = bytes_to_cv_image(reference_image)
     current_cv_image = bytes_to_cv_image(current_image)
+
+    try:
+        gray_reference = preprocess_for_model(reference_cv_image, config.image_size)
+        gray_current = preprocess_for_model(current_cv_image, config.image_size)
+    except ValueError as error:
+        # npr. "No face detected" iz izreza obraza
+        return {
+            "match": False,
+            "confidence": 0.0,
+            "message": f"Could not process face: {error}",
+        }
+
+    cv2.imwrite(str(DEBUG_DIR / "reference.jpg"), gray_reference)
+    cv2.imwrite(str(DEBUG_DIR / "current.jpg"), gray_current)
+
+    result = score_faces(gray_reference, gray_current, config)
+    is_match = result["score"] >= config.match_threshold
+
     return {
-        "match": True,
-        "confidence": 0.87,
-        "message": "Fixed response. Face comparison is not implemented yet.",
+        "match": bool(is_match),
+        "confidence": result["score"],
+        "message": (
+            f"LBP={result['lbp_similarity']}, ORB={result['orb_similarity']}, "
+            f"threshold={config.match_threshold}"
+        ),
     }
