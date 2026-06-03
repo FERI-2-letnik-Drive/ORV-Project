@@ -65,3 +65,35 @@ def make_pairs(persons: dict[str, list[Path]],
     pairs = positives + negatives
     rng.shuffle(pairs)
     return pairs
+
+
+def train_val_test_split(persons: dict[str, list[Path]],
+                         ratios: tuple[float, float, float] = (0.7, 0.15, 0.15),
+                         seed: int = 42) -> dict[str, dict[str, list[Path]]]:
+    """Razdeli osebe v ucno, validacijsko in testno mnozico.
+
+    Delitev je po OSEBAH (ne po slikah), da ista identiteta ne pride v vec
+    mnozic hkrati - to je nujno za posteno vrednotenje verifikacije.
+
+    Vrne {'train': {...}, 'val': {...}, 'test': {...}}.
+    """
+    if not abs(sum(ratios) - 1.0) < 1e-6:
+        raise ValueError("ratios must sum to 1.0")
+
+    names = list(persons.keys())
+    rng = random.Random(seed)
+    rng.shuffle(names)
+
+    n = len(names)
+    n_train = int(n * ratios[0])
+    n_val = int(n * ratios[1])
+
+    splits = {
+        "train": names[:n_train],
+        "val": names[n_train:n_train + n_val],
+        "test": names[n_train + n_val:],
+    }
+    return {
+        split: {name: persons[name] for name in split_names}
+        for split, split_names in splits.items()
+    }
