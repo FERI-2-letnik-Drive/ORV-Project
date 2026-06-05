@@ -23,3 +23,5 @@ debug_images/
 # OS junk
 .DS_Store
 Thumbs.db
+# Captured datasets (slik ne verzioniramo, le strukturo)
+data/dataset/*/
