@@ -21,8 +21,10 @@ class ModelConfig:
     # utezi obeh signalov (skupaj 1.0)
     lbp_weight: float = 0.6
     orb_weight: float = 0.4
-    # prag za odlocitev o ujemanju (privzeto; optimiziran v evalvaciji)
-    match_threshold: float = 0.5
+    # eksponentna lestvica za LBP podobnost (manjsi = strozji)
+    lbp_scale: float = 0.2
+    # prag za odlocitev o ujemanju (kalibriran; optimiziran v evalvaciji)
+    match_threshold: float = 0.45
     # ORB parametri
     orb_features: int = 500
     orb_ratio: float = 0.75

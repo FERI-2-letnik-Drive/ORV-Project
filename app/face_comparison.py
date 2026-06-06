@@ -17,7 +17,7 @@ import numpy as np
 from app.config import ModelConfig, DEFAULT_CONFIG
 from app.lbp import lbp_histogram
 from app.orb_matching import orb_similarity
-from app.similarity import chi_square_similarity
+from app.similarity import exp_chi_square_similarity
 from app.image_preprocessing import bytes_to_cv_image, preprocess_for_model
 
 DEBUG_DIR = Path("debug_images")
@@ -33,7 +33,8 @@ def score_faces(gray_a: np.ndarray, gray_b: np.ndarray,
     """
     hist_a = lbp_histogram(gray_a, config.lbp_grid)
     hist_b = lbp_histogram(gray_b, config.lbp_grid)
-    lbp_sim = chi_square_similarity(hist_a, hist_b)
+    n_cells = config.lbp_grid[0] * config.lbp_grid[1]
+    lbp_sim = exp_chi_square_similarity(hist_a, hist_b, n_cells, config.lbp_scale)
 
     orb_sim = orb_similarity(
         gray_a, gray_b,
