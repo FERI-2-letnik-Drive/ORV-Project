@@ -27,6 +27,7 @@ razumljiv in lasten.
    - podobnost = delež dobrih ujemanj.
 
 4. **Združitev in odločitev** (`app/face_comparison.py`)
+   - LBP podobnost = `exp(-(povprečna_chi²_na_celico)/lbp_scale)`,
    - `score = 0.6·LBP_sim + 0.4·ORB_sim`,
    - `match = score ≥ prag`.
 
@@ -36,7 +37,8 @@ razumljiv in lasten.
 |---|---|---|
 | `lbp_grid` | 8×8 | finost prostorske mreže LBP |
 | `lbp_weight` / `orb_weight` | 0.6 / 0.4 | uteži obeh signalov |
-| `match_threshold` | 0.5 | prag odločitve |
+| `lbp_scale` | 0.2 | lestvica eksponentne LBP podobnosti |
+| `match_threshold` | 0.45 | prag odločitve (kalibriran) |
 | `orb_features` | 500 | največ ORB ključnih točk |
 | `orb_ratio` | 0.75 | Lowejev ratio test |
 
