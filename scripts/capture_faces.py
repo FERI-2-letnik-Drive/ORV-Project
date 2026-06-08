@@ -8,6 +8,11 @@ Skripta odpre kamero, sproti zaznava obraz (Haar kaskada) in ob pritisku
 na SPACE shrani trenutni okvir v data/dataset/<person>/. Tipka Q konca.
 Slike se shranjujejo oznacene zaporedno (alice_000.jpg, alice_001.jpg ...).
 
+Ob vsakem zajemu po privzetem se shranijo tudi augmentirane razlicice
+(zrcaljenje, rotacija, svetlost) z uporabo skupnega modula augmentacije
+(app/image_augmentation.py). Tako podatkovno mnozico ze pri zajemu
+povecamo in popestrimo, kar izboljsa robustnost primerjave.
+
 To je orodje clana, ki skrbi za zajem in pripravo podatkov. Zajem zahteva
 kamero, zato se ne izvaja v testih.
 """
@@ -17,10 +22,27 @@ from pathlib import Path
 
 import cv2
 
+from app.image_augmentation import create_augmented_images
+
 DATASET_DIR = Path("data/dataset")
 
 
-def capture(person: str, count: int = 20, camera: int = 0) -> Path:
+def save_augmented(frame, out_dir: Path, base_name: str) -> int:
+    """Shrani augmentirane razlicice okvira poleg originala.
+
+    Vrne stevilo shranjenih augmentiranih slik. Uporablja skupni modul
+    augmentacije (create_augmented_images).
+    """
+    saved = 0
+    for variant, image in create_augmented_images(frame).items():
+        path = out_dir / f"{base_name}_{variant}.jpg"
+        cv2.imwrite(str(path), image)
+        saved += 1
+    return saved
+
+
+def capture(person: str, count: int = 20, camera: int = 0,
+            augment: bool = True) -> Path:
     out_dir = DATASET_DIR / person
     out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -52,9 +74,13 @@ def capture(person: str, count: int = 20, camera: int = 0) -> Path:
         if key == ord("q"):
             break
         if key == ord(" ") and len(faces) > 0:
-            path = out_dir / f"{person}_{saved:03d}.jpg"
+            base_name = f"{person}_{saved:03d}"
+            path = out_dir / f"{base_name}.jpg"
             cv2.imwrite(str(path), frame)
             print("saved", path)
+            if augment:
+                n = save_augmented(frame, out_dir, base_name)
+                print(f"  + {n} augmentiranih razlicic")
             saved += 1
 
     cap.release()
@@ -67,8 +93,10 @@ def main() -> None:
     parser.add_argument("--person", required=True, help="ime osebe / oznaka mape")
     parser.add_argument("--count", type=int, default=20, help="stevilo slik")
     parser.add_argument("--camera", type=int, default=0, help="indeks kamere")
+    parser.add_argument("--no-augment", action="store_true",
+                        help="ne shrani augmentiranih razlicic")
     args = parser.parse_args()
-    capture(args.person, args.count, args.camera)
+    capture(args.person, args.count, args.camera, augment=not args.no_augment)
 
 
 if __name__ == "__main__":
