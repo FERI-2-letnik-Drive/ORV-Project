@@ -9,9 +9,6 @@ komplementarna postopka racunalniskega vida:
 Koncni rezultat je utezena vsota obeh, odlocitev pa primerjava s pragom.
 """
 
-from pathlib import Path
-
-import cv2
 import numpy as np
 
 from app.config import ModelConfig, DEFAULT_CONFIG
@@ -19,9 +16,6 @@ from app.lbp import lbp_histogram
 from app.orb_matching import orb_similarity
 from app.similarity import exp_chi_square_similarity
 from app.image_preprocessing import bytes_to_cv_image, preprocess_for_model
-
-DEBUG_DIR = Path("debug_images")
-DEBUG_DIR.mkdir(exist_ok=True)
 
 
 def score_faces(gray_a: np.ndarray, gray_b: np.ndarray,
@@ -72,9 +66,6 @@ def face_comparison(reference_image: bytes, current_image: bytes,
             "confidence": 0.0,
             "message": f"Could not process face: {error}",
         }
-
-    cv2.imwrite(str(DEBUG_DIR / "reference.jpg"), gray_reference)
-    cv2.imwrite(str(DEBUG_DIR / "current.jpg"), gray_current)
 
     result = score_faces(gray_reference, gray_current, config)
     is_match = result["score"] >= config.match_threshold
