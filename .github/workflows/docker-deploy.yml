@@ -1,0 +1,35 @@
+name: Docker Build & Deploy
+
+# Po uspesnem merge-u na main zgradi Docker sliko ORV API
+# in jo potisne na Docker Hub.
+# Potrebni GitHub secrets (Settings -> Secrets and variables -> Actions):
+#   DOCKERHUB_USERNAME  - Docker Hub uporabnisko ime
+#   DOCKERHUB_TOKEN     - Docker Hub Access Token (Account Settings -> Security)
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-push:
+    name: Build & push ORV API image to Docker Hub
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build & push ORV API image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/orv-api:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/orv-api:${{ github.sha }}
